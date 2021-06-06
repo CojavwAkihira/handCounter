@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>子役カウンタ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script>
+        /* ピッチインピッチアウトによる拡大縮小を禁止 */
+        document.documentElement.addEventListener('touchstart', function(e) {
+            if (e.touches.length >= 2) {
+                e.preventDefault();
+            }
+        }, {
+            passive: false
+        });
+        /* ダブルタップによる拡大を禁止 */
+        var t = 0;
+        document.documentElement.addEventListener('touchend', function(e) {
+            var now = new Date().getTime();
+            if ((now - t) < 350) {
+                e.preventDefault();
+            }
+            t = now;
+        }, false);
+    </script>
+    <style>
+        body,
+        input,
+        textarea,
+        select {
+            /* 入力欄にフォーカスが当たっても拡大しない */
+            font-size: 17px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form>
+            <div class="h3 pt-3">初期設定</div>
+
+            <div class="row">
+                <p>※デフォルトでは本来の枚数 - 3枚の数値を反映しています。</p>
+            </div>
+
+            <div class="row px-2 pe-0 pt-2">
+                <div class="col-2 px-1 me-0 pe-0">
+                    <label for="formGroupBigPayout" class="form-label">BIG<br>枚数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" class="form-control" id="formGroupBigPayout" placeholder="BIG枚数を入力" value="309">
+                </div>
+                <div class="col-1 px-1">
+                    <p>枚</p>
+                </div>
+
+                <div class="col-2 px-1 me-0 pe-0">
+                    <label for="formGroupCherryPayout" class="form-label">チェリー<br>枚数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" class="form-control" id="formGroupCherryPayout" placeholder="チェリー枚数を入力" value="-1">
+                </div>
+                <div class="col-1 px-1 pe-3">
+                    <p>枚</p>
+                </div>
+
+            </div>
+            <div class="row px-2 pe-0">
+
+                <div class="col-2 px-1 me-0 pe-0">
+                    <label for="formGroupRegPayout" class="form-label">REG<br>枚数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" class="form-control" id="formGroupRegPayout" placeholder="REG枚数を入力" value="101">
+                </div>
+                <div class="col-1 px-1">
+                    <p>枚</p>
+                </div>
+
+                <div class="col-2 px-1 me-0 pe-0">
+                    <label for="formGroupOther1Payout" class="form-label">その他1<br>枚数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" class="form-control" id="formGroupOther1Payout" placeholder="その他の子役枚数を入力" value="12">
+                </div>
+                <div class="col-1 px-1 pe-3">
+                    <p>枚</p>
+                </div>
+
+            </div>
+            <div class="row px-2 pe-0">
+
+                <div class="col-2 px-1 me-0 pe-0">
+                    <label for="formGroupBellPayout" class="form-label">ブドウ/<br>ベル<br>枚数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" class="form-control" id="formGroupBellPayout" placeholder="ブドウ/ベル枚数を入力" value="4">
+                </div>
+                <div class="col-1 px-1">
+                    <p>枚</p>
+                </div>
+
+                <div class="col-2 px-1 ps-0 ms-0">
+                    <label for="formGroupOther2Payout" class="form-label">その他2<br>枚数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" class="form-control" id="formGroupOther2Payout" placeholder="その他の子役枚数を入力" value="7">
+                </div>
+                <div class="col-1 px-1">
+                    <p>枚</p>
+                </div>
+            </div>
+            <div class="row px-2 pe-0">
+
+                <div class="col-2 px-1 me-0 pe-0">
+                    <label for="formGroupReplay" class="form-label">リプレイ確率</label>
+                </div>
+                <div class="col-1 px-1">
+                    <p>1/</p>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" class="form-control" id="formGroupReplay" placeholder="リプレイ確率を入力" value="0.137">
+                </div>
+            </div>
+
+            <div class="h3 pt-2 pb-2">カウンタ</div>
+
+            <div class="row px-2 pe-0">
+                <div class="col-2 px-1 ps-0 ms-0">
+                    <label for="formGroupPlayGameStartCount" class="form-label">開始G数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" pattern="\d*" class="form-control" id="formGroupPlayGameStartCount" placeholder="開始ゲーム数を入力" value="0">
+                </div>
+                <div class="col-1 px-1">
+                    <p>G</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0">
+                <div class="col-2 px-1 ps-0 ms-0">
+                    <label for="formGroupPlayGameCount" class="form-label">総G数</label>
+                </div>
+                <div class="col px-1 me-0 pe-0">
+                    <input type="number" pattern="\d*" class="form-control" id="formGroupPlayGameCount" placeholder="総ゲーム数(現在のゲーム数)を入力" value="0">
+                </div>
+                <div class="col-1 px-1">
+                    <p>G</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0 pt-4 pb-0 mt-0 mb-0">
+                <div class="col">
+                    <p id="bigCountDisp" class="text-center h4">0</p>
+                </div>
+                <div class="col">
+                    <p id="regCountDisp" class="text-center h4">0</p>
+                </div>
+                <div class="col">
+                    <p id="bellCountDisp" class="text-center h4">0</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0 pt-0">
+                <div class="col">
+                    <button type="button" class="btn btn-danger btn-lg w-100 h-100" id="bigButton">BIG</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary btn-lg w-100 h-100" id="regButton">REG</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-success btn-lg w-100 h-100" id="bellButton">ブドウ<br>ベル</button>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0 pt-4 pb-0 mt-0 mb-0">
+                <div class="col">
+                    <p id="cherryCountDisp" class="text-center h4">0</p>
+                </div>
+                <div class="col">
+                    <p id="other1CountDisp" class="text-center h4">0</p>
+                </div>
+                <div class="col">
+                    <p id="other2CountDisp" class="text-center h4">0</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0 pt-4">
+                <div class="col">
+                    <button type="button" class="btn btn-warning btn-lg w-100 h-100" id="cherryButton">チェリー</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-secondary btn-lg w-100 h-100" id="other1Button">その他<br>1</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-info btn-lg w-100 h-100" id="other2Button">その他<br>2</button>
+                </div>
+            </div>
+
+            <div class="h2 pt-3">
+                <p>確率 & 差枚数</p>
+            </div>
+
+            <div class="row px-2 pe-0">
+                <div class="col">
+                    <p>差枚数</p>
+                </div>
+                <div class="col">
+                    <p id="diffNum">0枚</p>
+                </div>
+                <div class="col">
+                    <p>合成確率(合算)</p>
+                </div>
+                <div class="col">
+                    <p id="brProb">0/0</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0">
+                <div class="col">
+                    <p>BIG確率</p>
+                </div>
+                <div class="col">
+                    <p id="bigProb">0/0</p>
+                </div>
+
+                <div class="col">
+                    <p>REG確率</p>
+                </div>
+                <div class="col">
+                    <p id="regProb">0/0</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0">
+                <div class="col">
+                    <p>ブドウ/<br>ベル確率</p>
+                </div>
+                <div class="col">
+                    <p id="bellProb">0/0</p>
+                </div>
+
+                <div class="col">
+                    <p>チェリー 確率</p>
+                </div>
+                <div class="col">
+                    <p id="cherryProb">0/0</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pe-0">
+                <div class="col">
+                    <p>その他1 確率</p>
+                </div>
+                <div class="col">
+                    <p id="other1Prob">0/0</p>
+                </div>
+
+                <div class="col">
+                    <p>その他2 確率</p>
+                </div>
+                <div class="col">
+                    <p id="other2Prob">0/0</p>
+                </div>
+            </div>
+
+            <div class="row px-2 pt-2">
+                <div class="col">
+                    <button type="button" class="btn btn-primary btn-lg w-100" id="generate">確率を計算する<br>(グラフの途中経過を生成する)</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="h2 pt-3">
+            <p>グラフ</p>
+        </div>
+        <canvas id="graphCanvas"></canvas>
+
+        <div class="h2 pt-3">
+            <p>log</p>
+        </div>
+        <p id="log"></p>
+        <div style="padding-bottom: 55px;"></div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script>
+        var ctx = document.getElementById('graphCanvas').getContext('2d');
+        var labelData = [0]
+        var getData = [0]
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labelData,
+                datasets: [{
+                    lineTension: 0.1,
+                    fill: false,
+                    borderColor: "#329dfa",
+                    pointRadius: 0,
+                    cubicInterpolationMode: "default",
+                    data: getData,
+                    spanGaps: true
+                }]
+            },
+            options: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: false
+                },
+                elements: {
+                    line: {
+                        tension: 0,
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            stepSize: 350,
+                            stacked: true,
+                            callback: function(value, index, values) {
+                                return value + '枚'
+                            }
+                        }
+                    }]
+                },
+            }
+        });
+
+        function addData(chart, label, data) {
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+            });
+            chart.update();
+        }
+
+        function removeData(chart) {
+            chart.data.labels.pop();
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.pop();
+            });
+            chart.update();
+        }
+
+        var diffNum = 0;
+
+        var prevGameCount = document.getElementById("formGroupPlayGameStartCount");
+        var playedGameCount = document.getElementById("formGroupPlayGameCount");
+        var bigNum = document.getElementById("formGroupBigPayout");
+        var regNum = document.getElementById("formGroupRegPayout");
+        var cherryNum = document.getElementById("formGroupCherryPayout");
+        var bellNum = document.getElementById("formGroupBellPayout");
+        var other1Num = document.getElementById("formGroupOther1Payout");
+        var other2Num = document.getElementById("formGroupOther2Payout");
+        var replayNum = document.getElementById("formGroupReplay");
+
+        var bigCountDisp = document.getElementById("bigCountDisp");
+        var regCountDisp = document.getElementById("regCountDisp");
+        var bellCountDisp = document.getElementById("bellCountDisp");
+        var cherryCountDisp = document.getElementById("cherryCountDisp");
+        var other1CountDisp = document.getElementById("other1CountDisp");
+        var other2CountDisp = document.getElementById("other2CountDisp");
+
+        var diffNumDisp = document.getElementById("diffNum");
+        var brSumProbDisp = document.getElementById("brProb");
+        var bigProbDisp = document.getElementById("bigProb");
+        var regProbDisp = document.getElementById("regProb");
+        var bellProbDisp = document.getElementById("bellProb");
+        var cherryProbDisp = document.getElementById("cherryProb");
+        var other1ProbDisp = document.getElementById("other1Prob");
+        var other2ProbDisp = document.getElementById("other2Prob");
+
+        var bigButton = document.getElementById("bigButton");
+        var regButton = document.getElementById("regButton");
+        var bellButton = document.getElementById("bellButton");
+        var cherryButton = document.getElementById("cherryButton");
+        var other1Button = document.getElementById("other1Button");
+        var other2Button = document.getElementById("other2Button");
+        var generateButton = document.getElementById("generate");
+
+        var bigCount = 0;
+        var regCount = 0;
+        var bellCount = 0;
+        var cherryCount = 0;
+        var other1Count = 0;
+        var other2Count = 0;
+        var tempCount = 0;
+        var bonusCount = 0;
+        var bonusGetCount = 0;
+
+        bigButton.onclick = function() {
+            var gameCount = parseInt(playedGameCount.value) - parseInt(prevGameCount.value);
+            var temp2Count = gameCount - tempCount;
+
+            bigCount += 1;
+            bonusGetCount++;
+
+            if (tempCount !== gameCount) {
+                for (let i = gameCount; tempCount < i - 1; ++tempCount) {
+                    addData(myChart, tempCount + 1, null);
+                }
+                removeData(myChart);
+                diffNum = diffNum + parseInt((temp2Count - (Math.ceil((temp2Count * replayNum.value) * 10) / 10)) * -3);
+                addData(myChart, tempCount, diffNum);
+            }
+
+            diffNum += parseInt(bigNum.value);
+
+            if (bonusGetCount === 1) {
+                log.innerHTML = log.innerHTML + bonusGetCount + "回目    " + gameCount + "G    BIG<br>";
+            } else {
+                log.innerHTML = log.innerHTML + bonusGetCount + "回目    " + (parseInt(playedGameCount.value) - bonusCount) + "G    BIG<br>";
+            }
+
+            bonusCount = parseInt(playedGameCount.value);
+            bigCountDisp.innerHTML = bigCount;
+
+            if (tempCount !== gameCount) {
+                diffNum = diffNum + parseInt((temp2Count - (Math.ceil((temp2Count * replayNum.value) * 10) / 10)) * -3);
+                addData(myChart, tempCount, diffNum);
+                diffNumDisp.innerHTML = diffNum - 3 + "枚";
+            }
+        }
+
+        regButton.onclick = function() {
+            var gameCount = parseInt(playedGameCount.value) - parseInt(prevGameCount.value);
+            var temp2Count = gameCount - tempCount;
+
+            regCount += 1;
+            bonusGetCount++;
+
+            if (tempCount !== gameCount) {
+                for (let i = gameCount; tempCount < i - 1; ++tempCount) {
+                    addData(myChart, tempCount + 1, null);
+                }
+                removeData(myChart);
+                diffNum = diffNum + parseInt((temp2Count - (Math.ceil((temp2Count * replayNum.value) * 10) / 10)) * -3);
+                addData(myChart, tempCount, diffNum);
+            }
+
+            diffNum += parseInt(regNum.value);
+
+            if (bonusGetCount === 1) {
+                log.innerHTML = log.innerHTML + bonusGetCount + "回目    " + gameCount + "G    REG<br>";
+            } else {
+                log.innerHTML = log.innerHTML + bonusGetCount + "回目    " + (parseInt(playedGameCount.value) - bonusCount) + "G    REG<br>";
+            }
+            bonusCount = parseInt(playedGameCount.value);
+            regCountDisp.innerHTML = regCount;
+
+            if (tempCount !== gameCount) {
+                diffNum = diffNum + parseInt((temp2Count - (Math.ceil((temp2Count * replayNum.value) * 10) / 10)) * -3);
+                addData(myChart, tempCount, diffNum);
+                diffNumDisp.innerHTML = diffNum - 3 + "枚";
+            }
+        }
+
+        bellButton.onclick = function() {
+            bellCount += 1;
+            diffNum += parseInt(bellNum.value);
+            playedGameCount.value = parseInt(playedGameCount.value) + 1;
+            bellCountDisp.innerHTML = bellCount;
+        }
+        cherryButton.onclick = function() {
+            cherryCount += 1;
+            diffNum += parseInt(cherryNum.value);
+            playedGameCount.value = parseInt(playedGameCount.value) + 1;
+            cherryCountDisp.innerHTML = cherryCount;
+        }
+
+        other1Button.onclick = function() {
+            other1Count += 1;
+            diffNum += parseInt(other1Num.value);
+            playedGameCount.value = parseInt(playedGameCount.value) + 1;
+            other1CountDisp.innerHTML = other1Count;
+        }
+        other2Button.onclick = function() {
+            other2Count += 1;
+            diffNum += parseInt(other2Num.value);
+            playedGameCount.value = parseInt(playedGameCount.value) + 1;
+            other2CountDisp.innerHTML = other2Count;
+        }
+
+        generateButton.onclick = function() {
+            var gameCount = parseInt(playedGameCount.value) - parseInt(prevGameCount.value);
+            var temp2Count = gameCount - tempCount;
+
+            brSumProbDisp.innerHTML = (bigCount + regCount > 0) ? "1/" + Math.ceil(gameCount / (bigCount + regCount)) : "----";
+            bigProbDisp.innerHTML = (bigCount > 0) ? "1/" + Math.ceil(gameCount / bigCount) : "----";
+            regProbDisp.innerHTML = (regCount > 0) ? "1/" + Math.ceil(gameCount / regCount) : "----";
+            bellProbDisp.innerHTML = (bellCount > 0) ? "1/" + Math.ceil((gameCount / bellCount) * 10) / 10 : "----";
+            cherryProbDisp.innerHTML = (cherryCount > 0) ? "1/" + Math.ceil((gameCount / cherryCount) * 10) / 10 : "----";
+            other1ProbDisp.innerHTML = (other1Count > 0) ? "1/" + Math.ceil(gameCount / other1Count) : "----";
+            other2ProbDisp.innerHTML = (other2Count > 0) ? "1/" + Math.ceil(gameCount / other2Count) : "----";
+
+            if (tempCount !== gameCount) {
+                for (let i = gameCount; tempCount < i; ++tempCount) {
+                    addData(myChart, tempCount + 1, null);
+                }
+                removeData(myChart);
+                diffNum = diffNum + parseInt((temp2Count - (Math.ceil((temp2Count * replayNum.value) * 10) / 10)) * -3);
+                addData(myChart, tempCount, diffNum);
+                diffNumDisp.innerHTML = diffNum - 3 + "枚";
+            }
+        }
+    </script>
+</body>
+
+</html>
